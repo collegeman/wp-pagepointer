@@ -30,10 +30,19 @@ class WpPagePointer {
     add_action( 'template_redirect', array( $this, 'template_redirect' ) );
     add_action( 'save_post', array($this, 'save_post') );
     add_action( 'wp_ajax_og_preview', array($this, 'og_preview') );
+    add_filter( 'post_link', array($this, 'post_link'), 10, 3 );
   }
 
   function admin_init() {
     add_meta_box(__CLASS__, 'Redirect To', array($this, 'meta_box'), 'post');    
+  }
+
+  function post_link($permalink, $post, $leavename) {
+    if ($url = get_post_meta($post->ID, self::META_URL, true)) {
+      return $url;
+    } else {
+      return $permalink;
+    }
   }
 
   private function get_html($url) {

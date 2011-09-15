@@ -12,11 +12,23 @@
 # @see http://php.net/manual/en/function.function-exists.php
 #
 
-if (!function_exists('is_awesome')):
+if (!function_exists('get_the_pointer')):
 
-function is_awesome() {
-  return true;
+function get_the_pointer() {
+  global $post;
+  if (!$post || !$post->ID) {
+    return null;
+  } else {
+    return get_post_meta($post->ID, WpPagePointer::META_URL, true);
+  }
 }
 
+function the_pointer() {
+  echo get_the_pointer();
+}
 
-endif; // END is_awesome
+function is_page_pointer() {
+  return (bool) get_the_pointer();
+}
+
+endif;
