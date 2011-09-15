@@ -259,7 +259,7 @@ class WpPagePointer {
 
   function template_redirect() {
     global $post;
-    if ($post && $post->ID) {
+    if ($post && $post->ID && is_single()) {
       if ($url = get_post_meta($post->ID, self::META_URL, true)) {
         status_header(302);
         header('Location: '.$url);
