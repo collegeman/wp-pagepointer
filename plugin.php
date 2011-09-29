@@ -72,7 +72,7 @@ class WpPagePointer {
     ));    
 
     if (!is_wp_error($result)) {
-      return $result['body'];
+      return $result;
     } else {
       return false;
     }
@@ -216,18 +216,36 @@ class WpPagePointer {
               $fullpathfilename = $uploads['path'] . '/' . $filename;
               
               try {
-                if ( !substr_count($wp_filetype['type'], "image") ) {
-                  throw new Exception( basename($imageurl) . ' is not a valid image. ' . $wp_filetype['type']  . '' );
+                if (!$image = $this->get_image($imageurl)) {
+                  throw new Exception("The image cannot be downloaded.");
+                } else {
+                  $image_string = $image['body'];
+                  
+                  if ( !substr_count($wp_filetype['type'], "image") ) {
+                    $mime_type = strtolower($image['headers']['content-type']);
+                    if (strpos($mime_type, 'jpeg') !== false || strpos($mime_type, 'jpg') !== false) {
+                      $filename = wp_unique_filename( $uploads['path'], basename($imageurl).'.jpg', $unique_filename_callback = null );
+                    } else if (strpos($mime_type, 'gif') !== false) {
+                      $filename = wp_unique_filename( $uploads['path'], basename($imageurl).'.gif', $unique_filename_callback = null );
+                    } else if (strpos($mime_type, 'png') !== false) {
+                      $filename = wp_unique_filename( $uploads['path'], basename($imageurl).'.png', $unique_filename_callback = null );
+                    } else {
+                      throw new Exception("Image filetype cannot be determined.");
+                    }
+
+                    $fullpathfilename = $uploads['path'] . '/' . $filename;
+                  } else {
+                    $mime_type = $wp_filetype['type'];
+                  }
                 }
               
-                $image_string = $this->get_image($imageurl);
                 $fileSaved = file_put_contents($uploads['path'] . "/" . $filename, $image_string);
                 if ( !$fileSaved ) {
                   throw new Exception("The file cannot be saved.");
                 }
                 
                 $attachment = array(
-                  'post_mime_type' => $wp_filetype['type'],
+                  'post_mime_type' => $mime_type,
                   'post_title' => preg_replace('/\.[^.]+$/', '', $filename),
                   'post_content' => '',
                   'post_status' => 'inherit',
