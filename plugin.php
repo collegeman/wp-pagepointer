@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: Page Pointer
-Description: Create Post about any Page on the web. Visitors to your post are redirected to that page. Your Post appears - complete with excerpt, featured image, etc. - in your blog's taxonomy.
+Description: Post into your blog's taxnomy a reference to any page on the web, including other pages or posts on your own site.
 Version: 1.0
 Author: Aaron Collegeman, Fat Panda
-Author URI: http://aaroncollegeman.com/fatpanda
-Plugin URI: http://aaroncollegeman.com/wp-pagepointer
+Author URI: http://aaroncollegeman.com
+Plugin URI: http://github.com/collegeman/wp-pagepointer
 */
 
 class WpPagePointer {
